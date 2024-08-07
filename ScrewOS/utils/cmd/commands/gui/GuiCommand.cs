@@ -32,7 +32,7 @@ namespace ScrewOS.utils.cmd.commands.gui
         {
             string resolution = "640x480";
 
-            if (kwargs.TryGetValue("-r", out string specifiedResolution))
+            if (kwargs.TryGetValue("r", out string specifiedResolution))
             {
                 if (validResolutions.Contains(specifiedResolution))
                 {
