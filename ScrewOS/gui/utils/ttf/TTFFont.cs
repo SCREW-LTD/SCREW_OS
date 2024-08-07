@@ -11,7 +11,7 @@ namespace ScrewOS.gui.utils.ttf
     public class TTFFont
     {
         private Font font;
-        private Debugger debugger = new("TTFFont", "TTFFont");
+        private Debugger debugger = new("TTFFont");
 
         // Dictionary<color, Dictionary<scale, Dictionary<glyph, GlyphResult>>>
         private Dictionary<int,

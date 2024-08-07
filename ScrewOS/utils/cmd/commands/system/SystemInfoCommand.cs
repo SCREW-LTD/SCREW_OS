@@ -16,12 +16,13 @@ namespace ScrewOS.utils.cmd.commands.system
         {
             BreakLine();
             Console.WriteLine("Operation system");
-            Console.WriteLine("SCREW: OS (0.0.1)");
+            Console.WriteLine($"SCREW: OS ({SystemData.version})");
             Console.WriteLine("Screw Shell");
             BreakLine();
             Console.WriteLine("System");
             Console.WriteLine($"CPU: {Cosmos.Core.CPU.GetCPUBrandString()}");
             Console.WriteLine($"RAM: {Cosmos.Core.CPU.GetAmountOfRAM()} MB");
+            Console.WriteLine($"RAM BUSY: {Cosmos.Core.GCImplementation.GetUsedRAM() / 1024 / 1024} MB");
             Console.WriteLine("Drive: 0:\\");
             BreakLine();
         }

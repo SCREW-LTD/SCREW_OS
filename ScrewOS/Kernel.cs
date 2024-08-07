@@ -26,8 +26,6 @@ namespace ScrewOS
 {
     public class Kernel : Sys.Kernel
     {
-        readonly string asciiArt = "   _____ __________  _______       __     ____  _____\n  / ___// ____/ __ \\/ ____/ |     / /    / __ \\/ ___/\n  \\__ \\/ /   / /_/ / __/  | | /| / (_)  / / / /\\__ \\ \n ___/ / /___/ _, _/ /___  | |/ |/ /    / /_/ /___/ / \n/____/\\____/_/ |_/_____/  |__/|__(_)   \\____//____/  ";
-
         private BootMode bootMode;
         protected override void BeforeRun()
         {
@@ -51,7 +49,7 @@ namespace ScrewOS
         private void InitCLI()
         {
             Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.WriteLine(asciiArt);
+            Console.WriteLine(SystemData.asciiLogo);
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("\nSCREW: OS booted successfully.");
         }

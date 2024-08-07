@@ -90,7 +90,7 @@ namespace LunarLabs.Fonts
 
     internal class Font
     {
-        public Cosmos.Debug.Kernel.Debugger debugger = new("System", "System");
+        public Cosmos.Debug.Kernel.Debugger debugger = new("System");
         private int _glyphCount;
         private byte[] _data;              // pointer to .ttf file
         private string _name;
@@ -1356,7 +1356,7 @@ namespace LunarLabs.Fonts
                         //debugger.Send("RasterizeSortedEdges: Log Point 5");
                         int ofs = (int)(iii + j * bitmap.Width);
                         //debugger.Send(ofs.ToString());
-                        bitmap.rawData[ofs] = (scanline[iii] << 24) + rgbOffset;
+                        bitmap.RawData[ofs] = (scanline[iii] << 24) + rgbOffset;
                         //debugger.Send("RasterizeSortedEdges: Log Point 6");
                     }
 

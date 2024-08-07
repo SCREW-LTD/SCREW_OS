@@ -5,7 +5,7 @@ namespace ScrewOS
 {
     public class EmbeddedResourceLoader
     {
-        [ManifestResourceStream(ResourceName = "ScrewOS.resource.img.Background.bmp")]
+        [ManifestResourceStream(ResourceName = "ScrewOS.resource.img.Background2.bmp")]
         static byte[] ScrewOS_resource_background;
 
         [ManifestResourceStream(ResourceName = "ScrewOS.resource.img.cursor.cursor.bmp")]

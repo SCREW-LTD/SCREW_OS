@@ -22,6 +22,7 @@
 
     <ItemGroup>
       <None Remove="resource\FreeSans.ttf" />
+      <None Remove="resource\img\Background2.bmp" />
       <None Remove="resource\img\cursor\Background.bmp" />
       <None Remove="resource\img\cursor\cursor.bmp" />
     </ItemGroup>
@@ -29,6 +30,7 @@
     <ItemGroup>
       <EmbeddedResource Include="resource\fonts\FreeSans.ttf" />
       <EmbeddedResource Include="resource\img\Background.bmp" />
+      <EmbeddedResource Include="resource\img\Background2.bmp" />
       <EmbeddedResource Include="resource\img\cursor\cursor.bmp" />
     </ItemGroup>
 
