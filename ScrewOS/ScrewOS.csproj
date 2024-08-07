@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
@@ -36,7 +36,8 @@
         <PackageReference Include="Cosmos.Build" Version="0-*" NoWarn="NU1604" />
         <PackageReference Include="Cosmos.Debug.Kernel" Version="0-*" NoWarn="NU1604" />
         <PackageReference Include="Cosmos.System2" Version="0-*" NoWarn="NU1604" />
-    </ItemGroup>
+		    <PackageReference Include="Cosmos.Plugs" Version="0-*" NoWarn="NU1604" />
+		</ItemGroup>
 
     <ItemGroup>
       <Compile Update="Properties\Resources.Designer.cs">
