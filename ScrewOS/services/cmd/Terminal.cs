@@ -16,6 +16,7 @@ namespace ScrewOS.services.cmd
             RegisterCommand(new ScrewOS.utils.cmd.commands.system.LicenseCommand());
             RegisterCommand(new ScrewOS.utils.cmd.commands.system.RestartCommand());
             RegisterCommand(new ScrewOS.utils.cmd.commands.system.SystemInfoCommand());
+            RegisterCommand(new ScrewOS.utils.cmd.commands.gui.GuiCommand());
             RegisterCommand(new ScrewOS.utils.cmd.commands.network.NetConfigCommand());
         }
 
