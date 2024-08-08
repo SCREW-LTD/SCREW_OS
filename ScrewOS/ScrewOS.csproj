@@ -69,4 +69,8 @@
       </EmbeddedResource>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="gui\components\" />
+    </ItemGroup>
+
 </Project>

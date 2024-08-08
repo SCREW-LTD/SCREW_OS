@@ -11,6 +11,8 @@ Licensed under GPL-3
 =================================================================
 */
 
+using Cosmos.System.FileSystem.VFS;
+using Cosmos.System.FileSystem;
 using IL2CPU.API.Attribs;
 using ScrewOS.gui;
 using ScrewOS.services.cmd;
@@ -27,9 +29,12 @@ namespace ScrewOS
     public class Kernel : Sys.Kernel
     {
         private BootMode bootMode;
+        CosmosVFS fileSystem = new CosmosVFS();
         protected override void BeforeRun()
         {
-            Console.Clear();
+            Console.Clear(); 
+            VFSManager.RegisterVFS(fileSystem);
+
             bootMode = BootMenu.ChooseBootMode();
 
             switch (bootMode)

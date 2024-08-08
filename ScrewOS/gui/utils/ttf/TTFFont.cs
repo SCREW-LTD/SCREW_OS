@@ -1,4 +1,5 @@
 ﻿using Cosmos.Debug.Kernel;
+using Cosmos.HAL.Drivers.Video.SVGAII;
 using Cosmos.System.Graphics;
 using System;
 using System.Collections.Generic;
@@ -184,16 +185,61 @@ namespace ScrewOS.gui.utils.ttf
 
     public class CGSSurface : ITTFSurface
     {
-        private Canvas canvas;
+        private VMWareSVGAII canvas;
 
-        public CGSSurface(Canvas canvas)
+        public CGSSurface(VMWareSVGAII canvas)
         {
             this.canvas = canvas;
         }
 
         public void DrawBitmap(Bitmap bmp, int x, int y)
         {
-            canvas.DrawImageAlpha(bmp, x, y);
+            int ScreenWidth = (int)canvas.ReadRegister(Register.Width);
+            int ScreenHeight = (int)canvas.ReadRegister(Register.Height);
+            int screenX = x;
+            int screenY = y;
+            int height = (int)Math.Min((int)bmp.Height, ScreenHeight - screenY);
+            int width = (int)Math.Min((int)bmp.Width, ScreenWidth - screenX);
+
+            int bufferWidth = width;
+            int bufferHeight = height;
+            uint[] buffer = new uint[bufferWidth * bufferHeight];
+
+            for (int i = 0; i < height; i++)
+            {
+                int sourceIndex = i * (int)bmp.Width;
+                for (int j = 0; j < width; j++)
+                {
+                    int colorIndex = sourceIndex + j;
+                    int colorInt = bmp.RawData[colorIndex];
+
+                    byte alpha = (byte)((colorInt >> 24) & 0xFF);
+                    byte red = (byte)((colorInt >> 16) & 0xFF);
+                    byte green = (byte)((colorInt >> 8) & 0xFF);
+                    byte blue = (byte)(colorInt & 0xFF);
+
+                    if (alpha > 0)
+                    {
+                        buffer[i * bufferWidth + j] = (uint)((alpha << 24) | (red << 16) | (green << 8) | blue);
+                    }
+                    else
+                    {
+                        buffer[i * bufferWidth + j] = 0;
+                    }
+                }
+            }
+
+            for (int i = 0; i < height; i++)
+            {
+                for (int j = 0; j < width; j++)
+                {
+                    uint color = buffer[i * bufferWidth + j];
+                    if ((color >> 24) > 0)
+                    {
+                        canvas.SetPixel((uint)(screenX + j), (uint)(screenY + i), color);
+                    }
+                }
+            }
         }
     }
 }
