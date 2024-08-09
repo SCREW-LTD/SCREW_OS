@@ -18,9 +18,21 @@
         <Description>Use VMware Player or Workstation to deploy and debug.</Description>
         <PxeInterface>192.168.0.8</PxeInterface>
         <DebugEnabled>False</DebugEnabled>
+        <CompileVBEMultiboot>False</CompileVBEMultiboot>
+        <VBEResolution>1920x1080x32</VBEResolution>
     </PropertyGroup>
 
     <ItemGroup>
+      <None Remove="resource\fonts\OpenSans-Bold.ttf" />
+      <None Remove="resource\fonts\OpenSans-BoldItalic.ttf" />
+      <None Remove="resource\fonts\OpenSans-ExtraBold.ttf" />
+      <None Remove="resource\fonts\OpenSans-ExtraBoldItalic.ttf" />
+      <None Remove="resource\fonts\OpenSans-Italic.ttf" />
+      <None Remove="resource\fonts\OpenSans-Light.ttf" />
+      <None Remove="resource\fonts\OpenSans-LightItalic.ttf" />
+      <None Remove="resource\fonts\OpenSans-Regular.ttf" />
+      <None Remove="resource\fonts\OpenSans-Semibold.ttf" />
+      <None Remove="resource\fonts\OpenSans-SemiboldItalic.ttf" />
       <None Remove="resource\FreeSans.ttf" />
       <None Remove="resource\img\Background2.bmp" />
       <None Remove="resource\img\cursor\Background.bmp" />
@@ -29,6 +41,16 @@
 
     <ItemGroup>
       <EmbeddedResource Include="resource\fonts\FreeSans.ttf" />
+      <EmbeddedResource Include="resource\fonts\OpenSans-Bold.ttf" />
+      <EmbeddedResource Include="resource\fonts\OpenSans-BoldItalic.ttf" />
+      <EmbeddedResource Include="resource\fonts\OpenSans-ExtraBold.ttf" />
+      <EmbeddedResource Include="resource\fonts\OpenSans-ExtraBoldItalic.ttf" />
+      <EmbeddedResource Include="resource\fonts\OpenSans-Italic.ttf" />
+      <EmbeddedResource Include="resource\fonts\OpenSans-Light.ttf" />
+      <EmbeddedResource Include="resource\fonts\OpenSans-LightItalic.ttf" />
+      <EmbeddedResource Include="resource\fonts\OpenSans-Regular.ttf" />
+      <EmbeddedResource Include="resource\fonts\OpenSans-Semibold.ttf" />
+      <EmbeddedResource Include="resource\fonts\OpenSans-SemiboldItalic.ttf" />
       <EmbeddedResource Include="resource\img\Background.bmp" />
       <EmbeddedResource Include="resource\img\Background2.bmp" />
       <EmbeddedResource Include="resource\img\cursor\cursor.bmp" />
@@ -67,10 +89,6 @@
         <Generator>ResXFileCodeGenerator</Generator>
         <LastGenOutput>Resource1.Designer.cs</LastGenOutput>
       </EmbeddedResource>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="gui\components\" />
     </ItemGroup>
 
 </Project>

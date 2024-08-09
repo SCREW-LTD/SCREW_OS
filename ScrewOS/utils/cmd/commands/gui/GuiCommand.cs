@@ -30,26 +30,7 @@ namespace ScrewOS.utils.cmd.commands.gui
         };
         public override void Execute(List<string> args, Dictionary<string, string> kwargs)
         {
-            string resolution = "640x480";
-
-            if (kwargs.TryGetValue("r", out string specifiedResolution))
-            {
-                if (validResolutions.Contains(specifiedResolution))
-                {
-                    resolution = specifiedResolution;
-                }
-                else
-                {
-                    ConsoleUtil.Message(ConsoleUtil.MessageType.ERR, $"Invalid resolution specified: {specifiedResolution}. Using default resolution {resolution}.");
-                    return;
-                }
-            }
-
-            var dimensions = resolution.Split('x');
-            int width = int.Parse(dimensions[0]);
-            int height = int.Parse(dimensions[1]);
-
-            GuiHost.Init((uint)width, (uint)height);
+            Kernel.SwitchBootMode(boot.BootMode.Gui);
         }
     }
 }

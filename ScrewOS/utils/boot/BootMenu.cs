@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ScrewOS.utils.boot
 {
-    internal enum BootMode
+    public enum BootMode
     {
         Gui,
         Console,

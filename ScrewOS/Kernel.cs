@@ -28,41 +28,48 @@ namespace ScrewOS
 {
     public class Kernel : Sys.Kernel
     {
-        private BootMode bootMode;
-        CosmosVFS fileSystem = new CosmosVFS();
+        private static BootMode bootMode;
+        private static CosmosVFS fileSystem = new CosmosVFS();
+        private static GuiHost guiHost = new GuiHost();
         protected override void BeforeRun()
         {
             Console.Clear(); 
             VFSManager.RegisterVFS(fileSystem);
 
-            bootMode = BootMenu.ChooseBootMode();
+            SwitchBootMode(BootMenu.ChooseBootMode());
+        }
 
-            switch (bootMode)
+        public static void SwitchBootMode(BootMode mode)
+        {
+            switch (mode)
             {
                 case BootMode.Gui:
-                    GuiHost.Init();
+                    guiHost.Init();
                     break;
                 case BootMode.Console:
-                    InitCLI();
+                    Console.ForegroundColor = ConsoleColor.Magenta;
+                    Console.WriteLine(SystemData.asciiLogo);
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.WriteLine("\nSCREW: OS booted successfully.");
                     break;
                 default:
                     ConsoleUtil.Message(ConsoleUtil.MessageType.ERR, "Unexpected boot mode.");
                     break;
             }
-        }
-
-        private void InitCLI()
-        {
-            Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.WriteLine(SystemData.asciiLogo);
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("\nSCREW: OS booted successfully.");
+            bootMode = mode;
         }
 
         protected override void Run()
         {
-            Console.Write("\nscrewos@root: ");
-            Terminal.ParseCommand(Console.ReadLine());
+            if (bootMode == BootMode.Gui)
+            {
+                guiHost.Run();
+            }
+            else if (bootMode == BootMode.Console)
+            {
+                Console.Write("\nscrewos@root: ");
+                Terminal.ParseCommand(Console.ReadLine());
+            }
         }
     }
 }
