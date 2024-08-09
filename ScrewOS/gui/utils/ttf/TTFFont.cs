@@ -1,6 +1,7 @@
 ﻿using Cosmos.Debug.Kernel;
 using Cosmos.HAL.Drivers.Video.SVGAII;
 using Cosmos.System.Graphics;
+using ScrewOS.utils.boot;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -132,20 +133,47 @@ namespace ScrewOS.gui.utils.ttf
             return (int)(totalWidth * scale);
         }
 
-        public void DrawToSurface(ITTFSurface surface, int px, int x, int y, string text, Color color)
+        public enum Alignment
+        {
+            Left,
+            Right,
+            Center
+        }
+
+        public void DrawToSurface(ITTFSurface surface, int px, int x, int y, string text, Color color, Alignment align = Alignment.Left, int screenWidth = 0)
         {
             int offX = 0;
             GlyphResult g;
 
             Rune prevRune = new Rune('\0');
 
+            int totalWidth = 0;
             foreach (Rune c in text.EnumerateRunes())
             {
                 var gMaybe = RenderGlyphAsBitmap(c, color, px);
                 if (!gMaybe.HasValue) continue;
-
                 g = gMaybe.Value;
+                GetGlyphHMetrics(c, px, out int advWidth, out int lsb);
+                GetKerning(prevRune, c, px, out int kerning);
+                totalWidth += advWidth + kerning;
+                prevRune = c;
+            }
 
+            switch (align)
+            {
+                case Alignment.Center:
+                    x = x + (screenWidth - totalWidth) / 2;
+                    break;
+                case Alignment.Right:
+                    x = screenWidth - totalWidth - x;
+                    break;
+            }
+
+            foreach (Rune c in text.EnumerateRunes())
+            {
+                var gMaybe = RenderGlyphAsBitmap(c, color, px);
+                if (!gMaybe.HasValue) continue;
+                g = gMaybe.Value;
                 GetGlyphHMetrics(c, px, out int advWidth, out int lsb);
                 GetKerning(prevRune, c, px, out int kerning);
 
@@ -153,14 +181,19 @@ namespace ScrewOS.gui.utils.ttf
                 surface.DrawBitmap(g.bmp, x + offX, y + g.offY);
 
                 if (kerning > 0)
+                {
                     offX -= lsb;
+                }
                 else
+                {
                     offX += advWidth - lsb;
+                }
 
                 prevRune = c;
             }
         }
     }
+
 
     public struct GlyphResult
     {
@@ -185,61 +218,16 @@ namespace ScrewOS.gui.utils.ttf
 
     public class CGSSurface : ITTFSurface
     {
-        private VMWareSVGAII canvas;
+        private Canvas canvas;
 
-        public CGSSurface(VMWareSVGAII canvas)
+        public CGSSurface(Canvas canvas)
         {
             this.canvas = canvas;
         }
 
         public void DrawBitmap(Bitmap bmp, int x, int y)
         {
-            int ScreenWidth = (int)canvas.ReadRegister(Register.Width);
-            int ScreenHeight = (int)canvas.ReadRegister(Register.Height);
-            int screenX = x;
-            int screenY = y;
-            int height = (int)Math.Min((int)bmp.Height, ScreenHeight - screenY);
-            int width = (int)Math.Min((int)bmp.Width, ScreenWidth - screenX);
-
-            int bufferWidth = width;
-            int bufferHeight = height;
-            uint[] buffer = new uint[bufferWidth * bufferHeight];
-
-            for (int i = 0; i < height; i++)
-            {
-                int sourceIndex = i * (int)bmp.Width;
-                for (int j = 0; j < width; j++)
-                {
-                    int colorIndex = sourceIndex + j;
-                    int colorInt = bmp.RawData[colorIndex];
-
-                    byte alpha = (byte)((colorInt >> 24) & 0xFF);
-                    byte red = (byte)((colorInt >> 16) & 0xFF);
-                    byte green = (byte)((colorInt >> 8) & 0xFF);
-                    byte blue = (byte)(colorInt & 0xFF);
-
-                    if (alpha > 0)
-                    {
-                        buffer[i * bufferWidth + j] = (uint)((alpha << 24) | (red << 16) | (green << 8) | blue);
-                    }
-                    else
-                    {
-                        buffer[i * bufferWidth + j] = 0;
-                    }
-                }
-            }
-
-            for (int i = 0; i < height; i++)
-            {
-                for (int j = 0; j < width; j++)
-                {
-                    uint color = buffer[i * bufferWidth + j];
-                    if ((color >> 24) > 0)
-                    {
-                        canvas.SetPixel((uint)(screenX + j), (uint)(screenY + i), color);
-                    }
-                }
-            }
+            canvas.DrawImageAlpha(bmp, x, y);
         }
     }
 }
