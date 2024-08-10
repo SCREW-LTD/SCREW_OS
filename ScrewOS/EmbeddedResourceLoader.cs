@@ -5,6 +5,9 @@ namespace ScrewOS
 {
     public class EmbeddedResourceLoader
     {
+        [ManifestResourceStream(ResourceName = "ScrewOS.resource.img.logo.bmp")]
+        static byte[] ScrewOS_resource_logo;
+
         [ManifestResourceStream(ResourceName = "ScrewOS.resource.img.Background2.bmp")]
         static byte[] ScrewOS_resource_background;
 
@@ -20,6 +23,7 @@ namespace ScrewOS
         static Dictionary<string, byte[]> resources = new Dictionary<string, byte[]>()
         {
             {"Cursor", ScrewOS_resource_cursor},
+            {"Logo", ScrewOS_resource_logo},
             {"Background", ScrewOS_resource_background},
             {"FreeSans.ttf", ScrewOS_resource_freesans_ttf},
             {"OpenSans-Bold.ttf", ScrewOS_resource_opensans_bold_ttf},

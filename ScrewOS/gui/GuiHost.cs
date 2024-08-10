@@ -1,4 +1,5 @@
-﻿using Cosmos.Core.Memory;
+﻿using Cobalt.GetIMG;
+using Cosmos.Core.Memory;
 using Cosmos.HAL;
 using Cosmos.System;
 using Cosmos.System.Graphics;
@@ -7,6 +8,7 @@ using ScrewOS.gui.tools;
 using ScrewOS.gui.utils.ttf;
 using System;
 using System.Drawing;
+using System.Resources;
 
 namespace ScrewOS.gui
 {
@@ -14,15 +16,16 @@ namespace ScrewOS.gui
     {
         public const uint defaultScreenW = 1280, defaultScreenH = 720;
 
-        internal SVGAIICanvas canvas;
-        public CGSSurface surface;
+        public static SVGAIICanvas canvas;
+        public static Bitmap cachedWindow;
+        public static CGSSurface surface;
         private bool isInited = false;
-        
-        public TTFFont RegularFont, OpenSansBold;
+
+        public static TTFFont RegularFont, OpenSansBold;
         public Image Cursor, Background;
 
         int frames = 0;
-        public int FPS = 0;
+        public static int FPS = 0;
         int currentSecond = 0;
 
         public void Init(uint w = defaultScreenW, uint h = defaultScreenH)
@@ -52,8 +55,17 @@ namespace ScrewOS.gui
 
         public void Run()
         {
-            canvas.DrawImage(Background, 0, 0);
-            StatusBar.Render(this);
+            if (cachedWindow == null)
+            {
+                canvas.DrawImage(Background, 0, 0);
+                cachedWindow = TakeBitmap.GetImage(0, 0, (int)canvas.Mode.Width, (int)canvas.Mode.Height);
+            }
+            else
+            {
+                canvas.DrawImage(cachedWindow, 0, 0);
+            }
+            
+            StatusBar.Render();
             canvas.DrawImageAlpha(Cursor, (int)MouseManager.X, (int)MouseManager.Y);
             canvas.Display();
 
