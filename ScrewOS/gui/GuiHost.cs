@@ -52,7 +52,6 @@ namespace ScrewOS.gui
 
         public void Run()
         {
-            canvas.Clear(Color.Black);
             canvas.DrawImage(Background, 0, 0);
             StatusBar.Render(this);
             canvas.DrawImageAlpha(Cursor, (int)MouseManager.X, (int)MouseManager.Y);
