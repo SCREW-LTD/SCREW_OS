@@ -4,9 +4,12 @@ using Cosmos.HAL;
 using Cosmos.System;
 using Cosmos.System.Graphics;
 using ScrewOS.gui.components;
+using ScrewOS.gui.tasks;
+using ScrewOS.gui.tasks.interfaces;
 using ScrewOS.gui.tools;
 using ScrewOS.gui.utils.ttf;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Resources;
 
@@ -28,6 +31,8 @@ namespace ScrewOS.gui
         public static int FPS = 0;
         int currentSecond = 0;
 
+        public List<GuiElement> guiElements = new List<GuiElement>();
+
         public void Init(uint w = defaultScreenW, uint h = defaultScreenH)
         {
             MouseManager.ScreenWidth = w;
@@ -44,13 +49,20 @@ namespace ScrewOS.gui
             RegularFont = new TTFFont(EmbeddedResourceLoader.LoadEmbeddedResource("FreeSans.ttf"));
             OpenSansBold = new TTFFont(EmbeddedResourceLoader.LoadEmbeddedResource("OpenSans-Bold.ttf"));
 
+            RenderWallpaper("Background2");
+
             Cursor = new Bitmap(EmbeddedResourceLoader.LoadEmbeddedResource("Cursor"));
 
-            Bitmap wallpaper = new Bitmap(EmbeddedResourceLoader.LoadEmbeddedResource("Background"));
-
-            Background = wallpaper.ResizeHeightKeepRatio(canvas.Mode.Height);
+            guiElements.Add(new StatusBar());
 
             isInited = true;
+        }
+
+        public void RenderWallpaper(string name)
+        {
+            Bitmap wallpaper = new Bitmap(EmbeddedResourceLoader.LoadEmbeddedResource(name));
+            Background = wallpaper.ResizeHeightKeepRatio(canvas.Mode.Height);
+            cachedWindow = null;
         }
 
         public void Run()
@@ -64,8 +76,17 @@ namespace ScrewOS.gui
             {
                 canvas.DrawImage(cachedWindow, 0, 0);
             }
-            
-            StatusBar.Render();
+
+            foreach (var element in guiElements)
+            {
+                element.Render();
+
+                if(element is IWindow window)
+                {
+                    window.DragMove();
+                }
+            }
+
             canvas.DrawImageAlpha(Cursor, (int)MouseManager.X, (int)MouseManager.Y);
             canvas.Display();
 

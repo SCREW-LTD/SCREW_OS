@@ -11,11 +11,11 @@ using System.Threading.Tasks;
 
 namespace ScrewOS.gui.components
 {
-    public class StatusBar
+    public class StatusBar : GuiElementWithRerender
     {
-        private static Bitmap cachedStatusbar;
-        private static Bitmap logo = new Bitmap(EmbeddedResourceLoader.LoadEmbeddedResource("Logo")).ResizeWidthKeepRatio(20);
-        public static void Render()
+        private Bitmap cachedStatusbar;
+        private Bitmap logo = new Bitmap(EmbeddedResourceLoader.LoadEmbeddedResource("Logo")).ResizeWidthKeepRatio(20);
+        public void Render()
         {
             if (cachedStatusbar == null)
             {
@@ -33,6 +33,11 @@ namespace ScrewOS.gui.components
             var hours = DateExecutor.ConvertTo12HourFormat(Cosmos.HAL.RTC.Hour);
             GuiHost.OpenSansBold.DrawToSurface(GuiHost.surface, 16, 0, 20, $"{DateExecutor.GetMonthAbbreviation(Cosmos.HAL.RTC.Month)} {Cosmos.HAL.RTC.DayOfTheMonth.ToString("D2")}  {hours.Hour.ToString("D2")}:{Cosmos.HAL.RTC.Minute.ToString("D2")} {hours.Period}", Color.White, TTFFont.Alignment.Center, (int)GuiHost.canvas.Mode.Width);
             GuiHost.OpenSansBold.DrawToSurface(GuiHost.surface, 16, 12, 20, $"{GuiHost.FPS}", Color.White, TTFFont.Alignment.Right, (int)GuiHost.canvas.Mode.Width);
+        }
+
+        public void ReRender()
+        {
+            cachedStatusbar = null;
         }
     }
 }

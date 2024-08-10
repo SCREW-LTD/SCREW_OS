@@ -8,8 +8,11 @@ namespace ScrewOS
         [ManifestResourceStream(ResourceName = "ScrewOS.resource.img.logo.bmp")]
         static byte[] ScrewOS_resource_logo;
 
-        [ManifestResourceStream(ResourceName = "ScrewOS.resource.img.Background2.bmp")]
+        [ManifestResourceStream(ResourceName = "ScrewOS.resource.img.Background.bmp")]
         static byte[] ScrewOS_resource_background;
+
+        [ManifestResourceStream(ResourceName = "ScrewOS.resource.img.Background2.bmp")]
+        static byte[] ScrewOS_resource_background2;
 
         [ManifestResourceStream(ResourceName = "ScrewOS.resource.img.cursor.cursor.bmp")]
         static byte[] ScrewOS_resource_cursor;
@@ -25,6 +28,7 @@ namespace ScrewOS
             {"Cursor", ScrewOS_resource_cursor},
             {"Logo", ScrewOS_resource_logo},
             {"Background", ScrewOS_resource_background},
+            {"Background2", ScrewOS_resource_background2},
             {"FreeSans.ttf", ScrewOS_resource_freesans_ttf},
             {"OpenSans-Bold.ttf", ScrewOS_resource_opensans_bold_ttf},
         };
