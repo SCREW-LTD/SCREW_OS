@@ -1,6 +1,7 @@
 ﻿using Cosmos.System;
 using Cosmos.System.Graphics;
 using ScrewOS.gui.tasks.interfaces;
+using ScrewOS.gui.tools;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -46,7 +47,7 @@ namespace ScrewOS.gui.tasks
 
         public void Render()
         {
-            GuiHost.canvas.DrawFilledRectangle(Color.DarkGray, x, y, width, height);
+            GuiHost.canvas.DrawRoundedRectangle(x, y, width, height, 12, Color.FromArgb(255, 50, 50, 50));
         }
 
         public void Start()
@@ -66,7 +67,7 @@ namespace ScrewOS.gui.tasks
         {
             if(MouseManager.MouseState == MouseState.Left)
             {
-                if (MouseManager.X >= this.x && MouseManager.X <= this.x + this.width && MouseManager.Y >= this.y && MouseManager.Y <= this.y + 30)
+                if (isDragging || (MouseManager.X >= this.x && MouseManager.X <= this.x + this.width && MouseManager.Y >= this.y && MouseManager.Y <= this.y + 32))
                 {
                     if (!isDragging)
                     {
@@ -75,8 +76,11 @@ namespace ScrewOS.gui.tasks
                         dragStartY = (int)MouseManager.Y - this.y;
                     }
 
-                    this.x = (int)MouseManager.X - dragStartX;
-                    this.y = (int)MouseManager.Y - dragStartY;
+                    int newX = (int)MouseManager.X - dragStartX;
+                    int newY = (int)MouseManager.Y - dragStartY;
+
+                    this.x = Math.Max(1, Math.Min((int)(GuiHost.canvas.Mode.Width - width - 1), newX));
+                    this.y = Math.Max(32, Math.Min((int)(GuiHost.canvas.Mode.Height - height - 1), newY));
                 }
             }
             else

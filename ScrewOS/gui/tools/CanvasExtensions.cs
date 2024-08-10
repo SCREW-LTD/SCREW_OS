@@ -22,7 +22,7 @@ namespace ScrewOS.gui.tools
             canvas.DrawFilledRectangle(col, x + radius, y + height - radius - 1, width - 2 * radius, radius + 2);
 
             canvas.DrawFilledRectangle(col, x, y + radius, radius + 1, height - 2 * radius); 
-            canvas.DrawFilledRectangle(col, x + width - radius - 1, y + radius, radius + 1, height - 2 * radius);
+            canvas.DrawFilledRectangle(col, x + width - radius - 1, y + radius, radius + 2, height - 2 * radius);
 
             canvas.DrawFilledCircle(col, x + radius, y + radius, radius);
             canvas.DrawFilledCircle(col, x + width - radius, y + radius, radius);
