@@ -18,6 +18,37 @@ namespace ScrewOS.gui.tools
             return data;
         }
 
+        public static Bitmap DarkenBitmap(Bitmap originalBitmap, float factor)
+        {
+            uint width = originalBitmap.Width;
+            uint height = originalBitmap.Height;
+
+            Bitmap resultBitmap = new Bitmap(width, height, originalBitmap.Depth);
+
+            for (int i = 0; i < originalBitmap.RawData.Length; i++)
+            {
+                int pixel = originalBitmap.RawData[i];
+
+                int alpha = (pixel >> 24) & 0xFF;
+                int red = (pixel >> 16) & 0xFF;
+                int green = (pixel >> 8) & 0xFF;
+                int blue = pixel & 0xFF;
+
+                red = (int)(red * factor);
+                green = (int)(green * factor);
+                blue = (int)(blue * factor);
+
+                red = Math.Max(0, Math.Min(255, red));
+                green = Math.Max(0, Math.Min(255, green));
+                blue = Math.Max(0, Math.Min(255, blue));
+
+                resultBitmap.RawData[i] = (alpha << 24) | (red << 16) | (green << 8) | blue;
+            }
+
+            return resultBitmap;
+        }
+
+
         public static int[] ResizeBitmap(Bitmap bmp, uint nX, uint nY, bool check = false)
         {
             if (check && bmp.Width == nX && bmp.Height == nY) { return bmp.RawData; }

@@ -15,22 +15,28 @@ using System.Resources;
 
 namespace ScrewOS.gui
 {
+    public enum GuiState
+    {
+        LockScreen,
+        Desktop
+    }
     public class GuiHost
     {
         public const uint defaultScreenW = 1280, defaultScreenH = 720;
 
         public static SVGAIICanvas canvas;
-        public static Bitmap cachedWindow;
+        public static Bitmap cachedWindow, cachedBlurWindow;
         public static CGSSurface surface;
         private bool isInited = false;
 
-        public static TTFFont RegularFont, OpenSansBold;
+        public static TTFFont RegularFont, OpenSansBold, OpenSans;
         public Image Cursor, Background;
 
         int frames = 0;
         public static int FPS = 0;
         int currentSecond = 0;
 
+        GuiState state = GuiState.LockScreen;
         public List<GuiElement> guiElements = new List<GuiElement>();
 
         public void Init(uint w = defaultScreenW, uint h = defaultScreenH)
@@ -48,6 +54,7 @@ namespace ScrewOS.gui
 
             RegularFont = new TTFFont(EmbeddedResourceLoader.LoadEmbeddedResource("FreeSans.ttf"));
             OpenSansBold = new TTFFont(EmbeddedResourceLoader.LoadEmbeddedResource("OpenSans-Bold.ttf"));
+            OpenSans = new TTFFont(EmbeddedResourceLoader.LoadEmbeddedResource("OpenSans.ttf"));
 
             RenderWallpaper("Background2");
 
@@ -65,27 +72,53 @@ namespace ScrewOS.gui
             cachedWindow = null;
         }
 
-        public void Run()
+        public void RenderDesktop()
         {
-            if (cachedWindow == null)
-            {
-                canvas.DrawImage(Background, 0, 0);
-                cachedWindow = TakeBitmap.GetImage(0, 0, (int)canvas.Mode.Width, (int)canvas.Mode.Height);
-            }
-            else
-            {
-                canvas.DrawImage(cachedWindow, 0, 0);
-            }
-
             foreach (var element in guiElements)
             {
                 element.Render();
 
-                if(element is IWindow window)
+                if (element is IWindow window)
                 {
                     window.DragMove();
                 }
             }
+        }
+
+        public void RenderLockScreen()
+        {
+            canvas.DrawImage(cachedBlurWindow, 0, 0);
+            var hours = DateExecutor.ConvertTo12HourFormat(Cosmos.HAL.RTC.Hour);
+            OpenSansBold.DrawToSurface(surface, (int)canvas.Mode.Height / 6, 0, (int)canvas.Mode.Width / 10, $"{hours.Hour.ToString("D2")}:{Cosmos.HAL.RTC.Minute.ToString("D2")}", Color.White, TTFFont.Alignment.Center, (int)canvas.Mode.Width);
+            if (MouseManager.MouseState == MouseState.Left)
+            {
+                state = GuiState.Desktop;
+            }
+        }
+
+        public void CacheImages()
+        {
+            canvas.DrawImage(Background, 0, 0);
+            cachedWindow = TakeBitmap.GetImage(0, 0, (int)canvas.Mode.Width, (int)canvas.Mode.Height);
+            cachedBlurWindow = PostProcess.ApplyBlur(PostProcess.DarkenBitmap(cachedWindow, 0.8f), 20);
+        }
+
+        public void Run()
+        {
+            if (cachedWindow == null)
+            {
+                CacheImages();
+            }
+            else
+            {
+                if (state == GuiState.Desktop)
+                    canvas.DrawImage(cachedWindow, 0, 0);
+            }
+
+            RenderDesktop();
+
+            if(state == GuiState.LockScreen)
+                RenderLockScreen();
 
             canvas.DrawImageAlpha(Cursor, (int)MouseManager.X, (int)MouseManager.Y);
             canvas.Display();
@@ -98,10 +131,7 @@ namespace ScrewOS.gui
                 frames = 0;
             }
 
-            if (frames % 8 == 1)
-            {
-                Heap.Collect();
-            }
+            HeapCollector.Collect();
         }
     }
 }

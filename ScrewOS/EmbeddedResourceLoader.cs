@@ -23,6 +23,9 @@ namespace ScrewOS
         [ManifestResourceStream(ResourceName = "ScrewOS.resource.fonts.OpenSans-Bold.ttf")]
         static byte[] ScrewOS_resource_opensans_bold_ttf;
 
+        [ManifestResourceStream(ResourceName = "ScrewOS.resource.fonts.OpenSans-Regular.ttf")]
+        static byte[] ScrewOS_resource_opensans_ttf;
+
         static Dictionary<string, byte[]> resources = new Dictionary<string, byte[]>()
         {
             {"Cursor", ScrewOS_resource_cursor},
@@ -31,6 +34,7 @@ namespace ScrewOS
             {"Background2", ScrewOS_resource_background2},
             {"FreeSans.ttf", ScrewOS_resource_freesans_ttf},
             {"OpenSans-Bold.ttf", ScrewOS_resource_opensans_bold_ttf},
+            {"OpenSans.ttf", ScrewOS_resource_opensans_ttf},
         };
 
         public static byte[] LoadEmbeddedResource(string filename)
