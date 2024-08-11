@@ -11,6 +11,7 @@ using ScrewOS.gui.utils.ttf;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Resources;
 
 namespace ScrewOS.gui
@@ -29,15 +30,15 @@ namespace ScrewOS.gui
         public static CGSSurface surface;
         private bool isInited = false;
 
-        public static TTFFont RegularFont, OpenSansBold, OpenSans;
-        public Image Cursor, Background;
+        public static TTFFont RegularFont, OpenSansBold, OpenSansSemibold;
+        public Bitmap Cursor, Background;
 
         int frames = 0;
         public static int FPS = 0;
         int currentSecond = 0;
 
-        GuiState state = GuiState.LockScreen;
-        public List<GuiElement> guiElements = new List<GuiElement>();
+        public static GuiState state = GuiState.LockScreen;
+        private static List<GuiElement> guiElements = new List<GuiElement>();
 
         public void Init(uint w = defaultScreenW, uint h = defaultScreenH)
         {
@@ -54,14 +55,14 @@ namespace ScrewOS.gui
 
             RegularFont = new TTFFont(EmbeddedResourceLoader.LoadEmbeddedResource("FreeSans.ttf"));
             OpenSansBold = new TTFFont(EmbeddedResourceLoader.LoadEmbeddedResource("OpenSans-Bold.ttf"));
-            OpenSans = new TTFFont(EmbeddedResourceLoader.LoadEmbeddedResource("OpenSans.ttf"));
+            OpenSansSemibold = new TTFFont(EmbeddedResourceLoader.LoadEmbeddedResource("OpenSans-Semibold.ttf"));
 
             RenderWallpaper("Background2");
 
             Cursor = new Bitmap(EmbeddedResourceLoader.LoadEmbeddedResource("Cursor"));
-
-            guiElements.Add(new StatusBar());
-
+            RunProcess(new LockScreen());
+            RunProcess(new StatusBar());
+            
             isInited = true;
         }
 
@@ -72,27 +73,21 @@ namespace ScrewOS.gui
             cachedWindow = null;
         }
 
-        public void RenderDesktop()
+        public static void RunProcess(GuiElement element)
         {
-            foreach (var element in guiElements)
-            {
-                element.Render();
+            guiElements.Add(element);
 
-                if (element is IWindow window)
+            for (int i = 1; i < guiElements.Count; i++)
+            {
+                var current = guiElements[i];
+                int j = i - 1;
+
+                while (j >= 0 && guiElements[j].zIndex > current.zIndex)
                 {
-                    window.DragMove();
+                    guiElements[j + 1] = guiElements[j];
+                    j--;
                 }
-            }
-        }
-
-        public void RenderLockScreen()
-        {
-            canvas.DrawImage(cachedBlurWindow, 0, 0);
-            var hours = DateExecutor.ConvertTo12HourFormat(Cosmos.HAL.RTC.Hour);
-            OpenSansBold.DrawToSurface(surface, (int)canvas.Mode.Height / 6, 0, (int)canvas.Mode.Width / 10, $"{hours.Hour.ToString("D2")}:{Cosmos.HAL.RTC.Minute.ToString("D2")}", Color.White, TTFFont.Alignment.Center, (int)canvas.Mode.Width);
-            if (MouseManager.MouseState == MouseState.Left)
-            {
-                state = GuiState.Desktop;
+                guiElements[j + 1] = current;
             }
         }
 
@@ -111,14 +106,18 @@ namespace ScrewOS.gui
             }
             else
             {
-                if (state == GuiState.Desktop)
-                    canvas.DrawImage(cachedWindow, 0, 0);
+                canvas.DrawImage(cachedWindow, 0, 0);
             }
 
-            RenderDesktop();
+            foreach (var element in guiElements)
+            {
+                element.Render();
 
-            if(state == GuiState.LockScreen)
-                RenderLockScreen();
+                if (element is IWindow window)
+                {
+                    window.DragMove();
+                }
+            }
 
             canvas.DrawImageAlpha(Cursor, (int)MouseManager.X, (int)MouseManager.Y);
             canvas.Display();

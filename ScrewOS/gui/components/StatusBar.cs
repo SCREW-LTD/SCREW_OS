@@ -13,6 +13,8 @@ namespace ScrewOS.gui.components
 {
     public class StatusBar : GuiElementWithRerender
     {
+        int GuiElement.zIndex { get; } = 998;
+
         private Bitmap cachedStatusbar;
         private Bitmap logo = new Bitmap(EmbeddedResourceLoader.LoadEmbeddedResource("Logo")).ResizeWidthKeepRatio(20);
         public void Render()

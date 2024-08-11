@@ -10,6 +10,15 @@ using Font = LunarLabs.Fonts.Font;
 
 namespace ScrewOS.gui.utils.ttf
 {
+    public class Element
+    {
+        public int Width { get; }
+        public int Height { get; }
+        public Element(int width, int height) { 
+            this.Width = width;
+            this.Height = height;
+        }
+    }
     public class TTFFont
     {
         private Font font;
@@ -140,7 +149,7 @@ namespace ScrewOS.gui.utils.ttf
             Center
         }
 
-        public void DrawToSurface(ITTFSurface surface, int px, int x, int y, string text, Color color, Alignment align = Alignment.Left, int screenWidth = 0)
+        public Element DrawToSurface(ITTFSurface surface, int px, int x, int y, string text, Color color, Alignment align = Alignment.Left, int screenWidth = 0)
         {
             int offX = 0;
             GlyphResult g;
@@ -148,11 +157,13 @@ namespace ScrewOS.gui.utils.ttf
             Rune prevRune = new Rune('\0');
 
             int totalWidth = 0;
+            int totalHeight = 0;
             foreach (Rune c in text.EnumerateRunes())
             {
                 var gMaybe = RenderGlyphAsBitmap(c, color, px);
                 if (!gMaybe.HasValue) continue;
                 g = gMaybe.Value;
+                totalHeight = (int)Math.Max(totalHeight, g.bmp.Height);
                 GetGlyphHMetrics(c, px, out int advWidth, out int lsb);
                 GetKerning(prevRune, c, px, out int kerning);
                 totalWidth += advWidth + kerning;
@@ -191,6 +202,8 @@ namespace ScrewOS.gui.utils.ttf
 
                 prevRune = c;
             }
+
+            return new Element(totalWidth, totalHeight);
         }
     }
 

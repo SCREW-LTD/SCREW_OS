@@ -8,6 +8,7 @@ namespace ScrewOS.gui
 {
     public interface GuiElement
     {
+        int zIndex { get; }
         void Render();
     }
 

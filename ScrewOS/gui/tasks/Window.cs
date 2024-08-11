@@ -14,6 +14,7 @@ namespace ScrewOS.gui.tasks
 {
     public class Window : IProcess, IWindow
     {
+        int GuiElement.zIndex { get; } = 0;
         public Guid PID { get; private set; }
         public string Name { get; private set; }
         public Guid ParentPID { get; private set; }
